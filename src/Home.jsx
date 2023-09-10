@@ -19,6 +19,11 @@ function Home() {
   const [isLoading,setIsLoading] = useState(false)
   const [isLoadingFavorite,setIsLoadingFavorite] = useState(false)
   const [jumlahData,setJumlahData] = useState(0)
+  const [currentPage,setCurrentPage] = useState(1)
+  const [startIndex,setStartIndex] = useState(0)
+  const maxResult = 12
+  const [activeTab, setActiveTab] = useState('search');
+
 
 
   const handleInputChange = (event) => {
@@ -27,10 +32,10 @@ function Home() {
 
   const submit = async () => {
     setIsLoading(true)
-    console.log('ini submit:', title)
-    axios.get(`https://www.googleapis.com/books/v1/volumes?q={${title}}`)
+    console.log('ini submit:', title,maxResult,startIndex)
+    axios.get(`https://www.googleapis.com/books/v1/volumes?q={${title}}&maxResults=${maxResult}&startIndex=${startIndex}`)
     .then(res => {
-        setTitle('')
+      //setTitle('')
       setIsLoading(false)
       console.log('ini hasilnya :',res)
       if (res.data.totalItems == 0)
@@ -62,9 +67,6 @@ function Home() {
             console.log('INI RESPONSE : ',res)
             getDatabase()
         })
-        // const response = await axios.post(`http://localhost:3000/book`,data)
-        // console.log('INI RESPONSE : ',response)
-        // getDatabase()
     } catch (error) {
         console.log(error)
     }
@@ -74,7 +76,6 @@ function Home() {
     try {
         setIsLoadingFavorite(true)
         console.log('Menjalankan get database')
-        // const response = await axios.get(`http://localhost:3000/book/`)
         axios.get(`https://strange-petticoat-hare.cyclic.cloud/book/`)
         .then(res => {
             console.log('INI DATA DATABASE',res.data.data)
@@ -93,33 +94,61 @@ function Home() {
         console.log('menjalankan useEffect')
         getDatabase()
     },[])
+    const totalPages = Math.ceil(jumlahData / maxResult);
+
+    const nextButton = () => {
+      if (currentPage !== totalPages) {
+        const newCurrentPage = currentPage + 1;
+        const newStartIndex = startIndex + maxResult;
+        console.log('ini start index baru',newStartIndex)
+    
+        setCurrentPage(newCurrentPage);
+        setStartIndex(newStartIndex);
+    
+        // if (newStartIndex === startIndex) {
+        //   submit();
+        // }
+
+        setTimeout(() => {
+          // if (newStartIndex === startIndex + maxResult) {
+            submit();
+          // }
+        }, 500);
+      }
+    }
+
+    const beforeButton = () => {
+      if (currentPage !== 1) {
+        setCurrentPage(currentPage-1)
+        setStartIndex(startIndex-(maxResult))
+        submit()
+      }
+    }
+
 
   return (
     <>
     <h1>Book Finder</h1>
-    <button class="button-82-pushable" role="button"
-          onClick={() => getDatabase()}
-          disabled={isLoadingFavorite}
+    <div className='tabs'
+    style={{display:'flex',flexDirection:'row',gap:80,justifyContent:'center', marginBottom:100}}
+    >
+        <button
+          class="button-89" role="button"
+          onClick={() => setActiveTab('search')}
+          // className={`tab ${activeTab === 'search' ? 'active' : ''}`}
         >
-            <span class="button-82-shadow"></span>
-            <span class="button-82-edge"></span>
-            <span class="button-82-front text">
-            {isLoadingFavorite ? 'Loading...':'Favorite Book'}
-            </span>
+          Search
         </button>
-        <div className='flex'>
-      {favorite.map((item)=>(
-        <div key={item.id}>
-          <Card className='kotak'>
-          <Card.Img variant="top" style={{height:175}} src={item.image === 'null' ? book : item.image} />
-          <Card.Body style={{display:'flex',alignItems:'center',alignSelf:'center'}}>
-          <Card.Title style={{color: 'black',textAlign:'center'}}>{item.title}</Card.Title>
-          </Card.Body>
-          <ListGroup.Item style={{color: 'black'}}>{item.author}</ListGroup.Item>
-        </Card>
-        </div>
-      ))}
+        <button
+          class="button-89" role="button"
+          onClick={() => setActiveTab('favorite')}
+          // className={`tab ${activeTab === 'favorite' ? 'active' : ''}`}
+        >
+          Favorite
+        </button>
       </div>
+    {activeTab === 'search' ? (
+      <>
       <InputGroup style={{display: 'flex', gap: 20,justifyContent: 'center'}}>
         <input
         className='input'
@@ -128,7 +157,7 @@ function Home() {
         onChange={handleInputChange}
         />
         <button class="button-82-pushable" role="button"
-          onClick={submit}
+          onClick={()=>{submit(),setCurrentPage(1),setStartIndex(0)}}
           disabled={isLoading}
         >
             <span class="button-82-shadow"></span>
@@ -171,8 +200,58 @@ function Home() {
           </div>
         ))}
         </div>
+        {/* <div style={{display:'flex',flexDirection:'row',gap:10,justifyContent:'center'}}>
+        <h2 
+        onClick={() => beforeButton()}
+        style={{
+          color: 'red',
+          cursor: 'pointer',
+        }}
+        onMouseDown={(e) => e.target.style.color = 'darkred'}
+        onMouseUp={(e) => e.target.style.color = 'red'}
+        >Before</h2>
+        <h2>Page {currentPage} from {totalPages}</h2>
+        <h2 
+        onClick={() => nextButton()}
+        style={{
+          color: 'red',
+          cursor: 'pointer',
+        }}
+        onMouseDown={(e) => e.target.style.color = 'darkred'}
+        onMouseUp={(e) => e.target.style.color = 'red'}
+        >Next</h2>
+        </div> */}
       </div>
       }
+      </>
+    ) :
+    (
+      <>
+        <button class="button-82-pushable" role="button"
+          onClick={() => getDatabase()}
+          disabled={isLoadingFavorite}
+        >
+            <span class="button-82-shadow"></span>
+            <span class="button-82-edge"></span>
+            <span class="button-82-front text">
+            {isLoadingFavorite ? 'Loading...':'Favorite Book'}
+            </span>
+        </button>
+        <div className='flex'>
+      {favorite.map((item)=>(
+        <div key={item.id}>
+          <Card className='kotak'>
+          <Card.Img variant="top" style={{height:175}} src={item.image === 'null' ? book : item.image} />
+          <Card.Body style={{display:'flex',alignItems:'center',alignSelf:'center'}}>
+          <Card.Title style={{color: 'black',textAlign:'center'}}>{item.title}</Card.Title>
+          </Card.Body>
+          <ListGroup.Item style={{color: 'black'}}>{item.author}</ListGroup.Item>
+        </Card>
+        </div>
+      ))}
+      </div>
+      </>
+    )}
     </>
   )
 }
