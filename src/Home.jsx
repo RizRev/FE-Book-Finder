@@ -18,6 +18,7 @@ function Home() {
   const [favorite,setFavorite] = useState([])
   const [isLoading,setIsLoading] = useState(false)
   const [isLoadingFavorite,setIsLoadingFavorite] = useState(false)
+  const [jumlahData,setJumlahData] = useState(0)
 
 
   const handleInputChange = (event) => {
@@ -35,7 +36,9 @@ function Home() {
       if (res.data.totalItems == 0)
         {
             setData([])
+            setJumlahData(0)
         } else {
+            setJumlahData(res.data.totalItems)
             setData(res.data.items)
         }
       // console.log('ini data : ',data.volumeInfo.averageRating)
@@ -138,13 +141,15 @@ function Home() {
       {data.length === 0 ? 
       <h1>Tidak ada judul buku tersebut</h1> 
       :
+      <div>
+        <h2>{`Menemukan judul buku sebanyak : ${jumlahData}`}</h2>
         <div className='flex'>
         {data.map((item)=>(
           <div key={item.id}>
             <Card className='kotak'>
             <Card.Img variant="top" style={{height:175}} src={item.volumeInfo.imageLinks?.thumbnail ? item.volumeInfo.imageLinks?.thumbnail : book} />
             <Card.Body style={{display:'flex',alignItems:'center',alignSelf:'center'}}>
-            <Card.Title style={{color: 'black',textAlign:'center'}}>{item.volumeInfo?.title}</Card.Title>
+            <Card.Title style={{color: 'black',textAlign:'center',fontWeight:'bold'}}>{item.volumeInfo?.title}</Card.Title>
             </Card.Body>
             <ListGroup className="list-group-flush">
               {item.volumeInfo.authors ? (item.volumeInfo.authors.map((authors) => (
@@ -166,6 +171,7 @@ function Home() {
           </div>
         ))}
         </div>
+      </div>
       }
     </>
   )
