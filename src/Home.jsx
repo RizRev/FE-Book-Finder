@@ -74,8 +74,8 @@ function Home() {
         // const response = await axios.get(`http://localhost:3000/book/`)
         axios.get(`https://strange-petticoat-hare.cyclic.cloud/book/`)
         .then(res => {
-            console.log('INI DATA DATABASE',res.data)
-            setFavorite(res.data)
+            console.log('INI DATA DATABASE',res.data.data)
+            setFavorite(res.data.data)
             setIsLoadingFavorite(false)
         })
         // console.log('INI DATA DATABASE',response.data)
