@@ -65,7 +65,13 @@ function Home() {
         axios.post(`https://strange-petticoat-hare.cyclic.cloud/book`,data)
         .then(res => {
             console.log('INI RESPONSE : ',res)
+            if (res.data.success == true) {
+              alert('Berhasil Menambahkan dalam Favorite')
+            } 
             getDatabase()
+        }).catch(error => {
+          alert(`Buku Sudah ada dalam Favorite`)
+          console.log('Ini error catch',error)
         })
     } catch (error) {
         console.log(error)
@@ -95,6 +101,20 @@ function Home() {
         getDatabase()
     },[])
     const totalPages = Math.ceil(jumlahData / maxResult);
+
+    const deleteFavorite = (id) => {
+      try {
+        console.log('menjalankan delete favorite')
+        axios.delete(`https://strange-petticoat-hare.cyclic.cloud/book/${id}`)
+        .then( res => {
+          console.log('hasil delete' , res)
+          alert('Berhasil Menghapus Buku dalam Favorite')
+          getDatabase()
+        })
+      } catch (error) {
+        
+      }
+    }
 
     const nextButton = () => {
       if (currentPage !== totalPages) {
@@ -157,7 +177,9 @@ function Home() {
         onChange={handleInputChange}
         />
         <button class="button-82-pushable" role="button"
-          onClick={()=>{submit(),setCurrentPage(1),setStartIndex(0)}}
+          onClick={()=>{submit()
+            // ,setCurrentPage(1),setStartIndex(0)
+          }}
           disabled={isLoading}
         >
             <span class="button-82-shadow"></span>
@@ -200,27 +222,6 @@ function Home() {
           </div>
         ))}
         </div>
-        {/* <div style={{display:'flex',flexDirection:'row',gap:10,justifyContent:'center'}}>
-        <h2 
-        onClick={() => beforeButton()}
-        style={{
-          color: 'red',
-          cursor: 'pointer',
-        }}
-        onMouseDown={(e) => e.target.style.color = 'darkred'}
-        onMouseUp={(e) => e.target.style.color = 'red'}
-        >Before</h2>
-        <h2>Page {currentPage} from {totalPages}</h2>
-        <h2 
-        onClick={() => nextButton()}
-        style={{
-          color: 'red',
-          cursor: 'pointer',
-        }}
-        onMouseDown={(e) => e.target.style.color = 'darkred'}
-        onMouseUp={(e) => e.target.style.color = 'red'}
-        >Next</h2>
-        </div> */}
       </div>
       }
       </>
@@ -234,7 +235,7 @@ function Home() {
             <span class="button-82-shadow"></span>
             <span class="button-82-edge"></span>
             <span class="button-82-front text">
-            {isLoadingFavorite ? 'Loading...':'Favorite Book'}
+            {isLoadingFavorite ? 'Loading...':'Refresh'}
             </span>
         </button>
         <div className='flex'>
@@ -246,6 +247,9 @@ function Home() {
           <Card.Title style={{color: 'black',textAlign:'center'}}>{item.title}</Card.Title>
           </Card.Body>
           <ListGroup.Item style={{color: 'black'}}>{item.author}</ListGroup.Item>
+          <button onClick={() => deleteFavorite(item.id)}>
+            Delete Favorite
+          </button>
         </Card>
         </div>
       ))}
