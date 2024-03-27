@@ -112,7 +112,7 @@ function Home() {
           getDatabase()
         })
       } catch (error) {
-        
+        console.log('error delete',error)
       }
     }
 
