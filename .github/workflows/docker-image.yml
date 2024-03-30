@@ -16,7 +16,7 @@ jobs:
         with:
           host: 202.10.36.151
           username: root
-          password: @duqZ%B2Zh0#  # New secret for password
+          password: ${{ secrets.PASSWORD }}  # New secret for password
           port: 22
           script: |
             cd ../home/book-library/FE-Book-Finder
