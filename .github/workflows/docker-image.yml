@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build -t FE-book-finder .
+      run: docker build -t fe-book-finder .
 
     - name: Docker Run
-      run: docker run -d -p 8080:8080 FE-book-finder
+      run: docker run -d -p 8080:8080 fe-book-finder
