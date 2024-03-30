@@ -19,3 +19,24 @@ jobs:
 
     - name: Docker Run
       run: docker run -d -p 8080:8080 fe-book-finder
+
+        - name: Transfer Docker image to VPS
+      uses: appleboy/scp-action@master
+      with:
+        host: 202.10.36.151
+        username: root
+        key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCXo4SBmNqE99OFKQSR5/VEg8+qXeZSguVMK6Xj2sCkjcMZWIPkmHgz9kW2owWwaZ6UX91CxS3vlWwXNzGfCF8qOcoimqmdtLyAozoJ78Zz3QK4sxcyZiRlqaXYvi08stlyr8NSt5MmPdpcDvgErL6DkAoxEJzBMuXqLuVzaDEbRfzEoDrbNk/hMkxEXiUzz+xemXE4NpNjBa9Stj5kRprZzYJ0zr/8ubNIYPGaWSC9SRPVeps3BDSQTeoOrR+l9+IECLyPg8i5C/76NXlwjvbIn4LvPbQhi39hq/tPxeBEQlVF7E+UKT3coanSYw6kL5HmSbjMM72kkRDQ7HkRdJobCgBVNUPM5Sj0fyrov9DLOPMjYSOjTASu0eKaiI/D0zMUVzcEKJDuui4gkdjJMCYGIIY8dmfTeXkINRObmS0qFpZNgk5cfbzkh6R8woxKH/BjPv+2fSGeE8fk/tu9itU2NZzOpGsrZwNXoSnwT/iGv/mHWbuSFRMzmNY56JZirOVvA+pG6U+I5LNJL36ofInJT+p784AGmbQnaX61Gr9T+2bm4doZ0MtzLGY5PRGrifIaEmtB/kyIZAcjCWvkpjUQz+kMH7sh3RcDFfRxLXXDGMgEclxDbYFXf9wgcilWKaQKwYPpHINNhXssvb6aWsWal1MPwhc+BnBpJovnkGFlDQ== rizkyrevanda@gmail.com
+        source: "."
+        target: "../home/book-library"
+        port: 22
+      
+    - name: SSH into VPS and start Docker container
+      uses: appleboy/ssh-action@master
+      with:
+        host: 202.10.36.151
+        username: root
+        key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCXo4SBmNqE99OFKQSR5/VEg8+qXeZSguVMK6Xj2sCkjcMZWIPkmHgz9kW2owWwaZ6UX91CxS3vlWwXNzGfCF8qOcoimqmdtLyAozoJ78Zz3QK4sxcyZiRlqaXYvi08stlyr8NSt5MmPdpcDvgErL6DkAoxEJzBMuXqLuVzaDEbRfzEoDrbNk/hMkxEXiUzz+xemXE4NpNjBa9Stj5kRprZzYJ0zr/8ubNIYPGaWSC9SRPVeps3BDSQTeoOrR+l9+IECLyPg8i5C/76NXlwjvbIn4LvPbQhi39hq/tPxeBEQlVF7E+UKT3coanSYw6kL5HmSbjMM72kkRDQ7HkRdJobCgBVNUPM5Sj0fyrov9DLOPMjYSOjTASu0eKaiI/D0zMUVzcEKJDuui4gkdjJMCYGIIY8dmfTeXkINRObmS0qFpZNgk5cfbzkh6R8woxKH/BjPv+2fSGeE8fk/tu9itU2NZzOpGsrZwNXoSnwT/iGv/mHWbuSFRMzmNY56JZirOVvA+pG6U+I5LNJL36ofInJT+p784AGmbQnaX61Gr9T+2bm4doZ0MtzLGY5PRGrifIaEmtB/kyIZAcjCWvkpjUQz+kMH7sh3RcDFfRxLXXDGMgEclxDbYFXf9wgcilWKaQKwYPpHINNhXssvb6aWsWal1MPwhc+BnBpJovnkGFlDQ== rizkyrevanda@gmail.com
+        port: 22
+        script: |
+          cd ../home/book-library
+          docker-compose up -d
