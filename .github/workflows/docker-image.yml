@@ -18,6 +18,9 @@ jobs:
       uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        name: id_rsa
+        if_key_exists: fail
+        known_hosts: ''
         
     - name: SSH into VPS and update files
       uses: appleboy/ssh-action@master
