@@ -17,10 +17,7 @@ jobs:
     - name: Build the Docker image
       run: docker build -t fe-book-finder .
 
-    - name: Docker Run
-      run: docker run -d -p 8080:8080 fe-book-finder
-
-        - name: Transfer Docker image to VPS
+    - name: Transfer Docker image to VPS
       uses: appleboy/scp-action@master
       with:
         host: 202.10.36.151
@@ -39,4 +36,4 @@ jobs:
         port: 22
         script: |
           cd ../home/book-library
-          docker-compose up -d
+          docker run -d -p 8080:8080 fe-book-finder
