@@ -2,9 +2,9 @@ FROM node:latest as build
 
 WORKDIR /app
 
-COPY package.json .
-COPY package-lock.json .    
-COPY node_modules .
+COPY package.json .   
+
+RUN npm install
 
 COPY . .
 
