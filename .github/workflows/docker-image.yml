@@ -1,33 +1,23 @@
-name: Update on Main Branch Push
+name: Deploy to VPS on push to main
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  update:
-    name: SSH into VPS and Update
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        name: id_rsa
-        if_key_exists: fail
-        known_hosts: ''
-        
-    - name: SSH into VPS and update files
-      uses: appleboy/ssh-action@master
-      with:
-        host: 202.10.36.151
-        username: root
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd /path/to/your/cloned/repository
-          git pull origin main
+      - uses: actions/checkout@v2
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: 202.10.36.151
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd ../home/book-library/FE-Book-Finder
+            git pull origin main
