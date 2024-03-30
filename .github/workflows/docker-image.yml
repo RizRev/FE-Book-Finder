@@ -1,4 +1,4 @@
-name: Deploy to VPS on push to main
+name: Deploy to VPS on push to main (Password Auth)
 
 on:
   push:
@@ -12,11 +12,11 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Deploy to VPS
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v2  # Updated version for password support
         with:
           host: 202.10.36.151
           username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: @duqZ%B2Zh0#  # New secret for password
           port: 22
           script: |
             cd ../home/book-library/FE-Book-Finder
