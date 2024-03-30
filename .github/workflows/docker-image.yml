@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Deploy to VPS
-        uses: appleboy/ssh-action@v2  # Updated version for password support
+        uses: appleboy/ssh-action@<latest_version>  # Updated version for password support
         with:
           host: 202.10.36.151
           username: root
