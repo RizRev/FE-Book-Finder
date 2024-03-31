@@ -62,7 +62,7 @@ function Home() {
             image: item.volumeInfo.imageLinks?.thumbnail ? item.volumeInfo.imageLinks.thumbnail : null,
             author: item.volumeInfo.authors ? item.volumeInfo.authors : 'Anonymous'
         }
-        axios.post(`https://strange-petticoat-hare.cyclic.cloud/book`,data)
+        axios.post(`https://book-backend.codeaestheticjkt.my.id/book`,data)
         .then(res => {
             console.log('INI RESPONSE : ',res)
             if (res.data.success == true) {
@@ -82,7 +82,7 @@ function Home() {
     try {
         setIsLoadingFavorite(true)
         console.log('Menjalankan get database')
-        axios.get(`https://strange-petticoat-hare.cyclic.cloud/book/`)
+        axios.get(`https://book-backend.codeaestheticjkt.my.id/book/`)
         .then(res => {
             console.log('INI DATA DATABASE',res.data.data)
             setFavorite(res.data.data)
@@ -105,7 +105,7 @@ function Home() {
     const deleteFavorite = (id) => {
       try {
         console.log('menjalankan delete favorite')
-        axios.delete(`https://strange-petticoat-hare.cyclic.cloud/book/${id}`)
+        axios.delete(`https://book-backend.codeaestheticjkt.my.id/book/${id}`)
         .then( res => {
           console.log('hasil delete' , res)
           alert('Berhasil Menghapus Buku dalam Favorite')
