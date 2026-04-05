@@ -1,15 +1,25 @@
-FROM node:latest as build
+# Stage 1: Build
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json .   
+ARG VITE_BACKEND_URL
+ARG VITE_PORT
 
-RUN npm install
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ENV VITE_PORT=$VITE_PORT
+
+COPY package*.json ./
+RUN npm ci
 
 COPY . .
+RUN npm run build
 
-RUN npm run build           
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
 
-EXPOSE 7000
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-CMD [ "npm", "run", "preview" ]
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

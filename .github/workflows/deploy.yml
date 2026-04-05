@@ -1,0 +1,49 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          build-args: |
+            VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
+            VITE_PORT=${{ secrets.VITE_PORT }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/fe-book-finder:latest
+            ${{ secrets.DOCKER_USERNAME }}/fe-book-finder:${{ github.run_number }}
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            mkdir -p /opt/fe-book-finder
+            cd /opt/fe-book-finder
+            export IMAGE=${{ secrets.DOCKER_USERNAME }}/fe-book-finder:${{ github.run_number }}
+            export PREV_TAG=$(cat .last_tag 2>/dev/null || echo "latest")
+            echo ${{ github.run_number }} > .last_tag
+            bash deploy.sh "$IMAGE" "$PREV_TAG"
