@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react'
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 import InputGroup from 'react-bootstrap/InputGroup';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import book from './assets/Book.png'
 import axios from 'axios';
-import RatingStars from 'react-rating-stars-component';
 import StarRatings from 'react-star-ratings';
 import './Home.css'
 
@@ -62,7 +59,7 @@ function Home() {
             image: item.volumeInfo.imageLinks?.thumbnail ? item.volumeInfo.imageLinks.thumbnail : null,
             author: item.volumeInfo.authors ? item.volumeInfo.authors : 'Anonymous'
         }
-        axios.post(`https://book-backend.codeaestheticjkt.my.id/book`,data)
+        axios.post(`${BACKEND_URL}/book`,data)
         .then(res => {
             console.log('INI RESPONSE : ',res)
             if (res.data.success == true) {
@@ -82,7 +79,7 @@ function Home() {
     try {
         setIsLoadingFavorite(true)
         console.log('Menjalankan get database')
-        axios.get(`https://book-backend.codeaestheticjkt.my.id/book/`)
+        axios.get(`${BACKEND_URL}/book/`)
         .then(res => {
             console.log('INI DATA DATABASE',res.data.data)
             setFavorite(res.data.data)
@@ -105,7 +102,7 @@ function Home() {
     const deleteFavorite = (id) => {
       try {
         console.log('menjalankan delete favorite')
-        axios.delete(`https://book-backend.codeaestheticjkt.my.id/book/${id}`)
+        axios.delete(`${BACKEND_URL}/book/${id}`)
         .then( res => {
           console.log('hasil delete' , res)
           alert('Berhasil Menghapus Buku dalam Favorite')
